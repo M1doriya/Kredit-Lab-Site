@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kredit Lab — Clarity Before Capital</title>
+  <meta name="description" content="Kredit Lab is a Malaysian fintech consultancy founded by former bankers. We provide clarity-first financial guidance for SMEs—diagnose first, then prescribe." />
+
+  <style>
+    /* =========================================================
+       THEME SYSTEM (Dark by default, Light via html[data-theme])
+       ========================================================= */
+    :root{
+      --primary: #10b981;
+      --accent: #3b82f6;
+      --purple: #a855f7;
+
+      /* Dark defaults */
+      --bg-0: #020617;   /* deepest */
+      --bg-1: #0f172a;   /* base */
+      --bg-2: #1e293b;   /* section */
+      --panel: rgba(255,255,255,0.04);
+      --panel-2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.10);
+      --border-2: rgba(255,255,255,0.14);
+
+      --text: #f8fafc;
+      --muted: #94a3b8;
+
+      --shadow: 0 18px 55px rgba(0,0,0,0.35);
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
+
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+
+      --max: 1140px;
+    }
+
+    /* Light overrides */
+    html[data-theme="light"]{
+      --bg-0: #f8fafc;
+      --bg-1: #eef2ff;
+      --bg-2: #ffffff;
+
+      --panel: rgba(255,255,255,0.85);
+      --panel-2: rgba(255,255,255,0.75);
+      --border: rgba(15, 23, 42, 0.10);
+      --border-2: rgba(15, 23, 42, 0.16);
+
+      --text: #0f172a;
+      --muted: rgba(15, 23, 42, 0.65);
+
+      --shadow: 0 18px 55px rgba(15, 23, 42, 0.12);
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+
+      /* Background changes by theme automatically via variables */
+      background:
+        radial-gradient(900px 520px at 14% -10%, rgba(168,85,247,0.18), transparent 60%),
+        radial-gradient(900px 520px at 88% 0%, rgba(16,185,129,0.12), transparent 55%),
+        radial-gradient(900px 520px at 80% 70%, rgba(59,130,246,0.10), transparent 60%),
+        radial-gradient(circle at top left, var(--bg-2), var(--bg-0) 45%, var(--bg-0));
+    }
+
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 22px; }
+
+    /* NAV */
+    .nav{
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(12px) saturate(150%);
+      background: color-mix(in srgb, var(--bg-0) 70%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 240px;
+    }
+    .logo{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 30% 10%, #8b5cf6, #6d28d9);
+      box-shadow: 0 0 0 1px rgba(139,92,246,0.55), 0 14px 30px rgba(109,40,217,0.35);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      user-select: none;
+      color: #fff;
+    }
+    .brand-text b { display:block; letter-spacing:-0.01em; }
+    .brand-text span { display:block; font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+    .nav-links{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nav-links a{
+      font-size: 13px;
+      color: var(--muted);
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: 0.22s ease;
+    }
+    .nav-links a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: color-mix(in srgb, var(--panel) 60%, transparent);
+    }
+
+    .nav-cta{
+      display:flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hamburger{
+      display:none;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel) 60%, transparent);
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Theme toggle button */
+    .theme-toggle{
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel) 60%, transparent);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 850;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: 0.2s ease;
+      font-family: inherit;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .theme-toggle:hover{
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+    }
+
+    .mobile-menu{
+      display:none;
+      padding: 10px 0 16px;
+      border-top: 1px solid var(--border);
+    }
+    .mobile-menu a{
+      display:block;
+      padding: 10px 10px;
+      border-radius: 12px;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .mobile-menu a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: color-mix(in srgb, var(--panel) 60%, transparent);
+    }
+    .mobile-menu.show { display:block; }
+
+    /* UI */
+    h1, h2, h3 { font-weight: 850; letter-spacing: -0.02em; }
+    .section-title{
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .section-subtitle{
+      text-align: center;
+      color: var(--muted);
+      margin: 0 auto 52px;
+      max-width: 760px;
+      font-size: 1.02rem;
+    }
+    .highlight{
+      background: linear-gradient(90deg, var(--primary), #34d399, #a7f3d0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      background: color-mix(in srgb, var(--primary) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--primary) 60%, transparent);
+      color: color-mix(in srgb, var(--primary) 35%, var(--text));
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* BUTTONS */
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 26px;
+      border-radius: var(--radius-pill);
+      font-weight: 850;
+      transition: 0.22s ease;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.07em;
+      border: 1px solid transparent;
+      cursor: pointer;
+      gap: 10px;
+      user-select: none;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .btn-primary{
+      background: var(--primary);
+      color: #02110b;
+      box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
+    }
+    .btn-primary:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 55%, transparent);
+    }
+    .btn-outline{
+      border: 1px solid var(--border-2);
+      background: color-mix(in srgb, var(--panel) 65%, transparent);
+      color: var(--text);
+    }
+    .btn-outline:hover{
+      border-color: color-mix(in srgb, var(--text) 20%, var(--border-2));
+      background: color-mix(in srgb, var(--panel) 80%, transparent);
+      transform: translateY(-2px);
+    }
+
+    /* HERO */
+    .hero{
+      padding: 86px 0 70px;
+      text-align: center;
+      background: radial-gradient(circle at top, color-mix(in srgb, var(--primary) 12%, transparent) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero h1{
+      font-size: clamp(2.45rem, 5vw, 3.9rem);
+      line-height: 1.05;
+      margin: 18px 0 18px;
+    }
+    .hero p{
+      font-size: clamp(1.05rem, 2.1vw, 1.25rem);
+      color: var(--muted);
+      margin: 0 auto 30px;
+      max-width: 900px;
+    }
+    .hero-actions{
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .badge-row{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap: 10px;
+      margin-top: 22px;
+      color: var(--muted);
+    }
+    .badge{
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel) 65%, transparent);
+      font-size: 0.95rem;
+    }
+
+    /* SECTIONS */
+    section{ padding: 92px 0; }
+    .philosophy{
+      background: color-mix(in srgb, var(--bg-2) 70%, transparent);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .quote-box{
+      border-left: 4px solid var(--primary);
+      padding-left: 26px;
+      margin: 38px auto 18px;
+      max-width: 900px;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: var(--text);
+    }
+    .center-copy{
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+      margin-top: 44px;
+    }
+    .grid-2{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 18px;
+      margin-top: 44px;
+    }
+
+    .card{
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+      transition: 0.22s ease;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:
+        radial-gradient(500px 220px at 15% 15%, rgba(168,85,247,0.10), transparent 55%),
+        radial-gradient(500px 220px at 85% 20%, rgba(16,185,129,0.10), transparent 55%),
+        radial-gradient(500px 220px at 75% 90%, rgba(59,130,246,0.08), transparent 55%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .card > * { position: relative; z-index: 1; }
+    .card:hover { transform: translateY(-6px); border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+
+    .icon{
+      width: 46px; height: 46px; border-radius: 16px;
+      display:flex; align-items:center; justify-content:center;
+      background: color-mix(in srgb, var(--panel) 75%, transparent);
+      border: 1px solid var(--border);
+      font-size: 18px;
+    }
+    .icon.green { border-color: color-mix(in srgb, var(--primary) 35%, var(--border)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent); }
+    .icon.blue  { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent); }
+    .icon.purple{ border-color: color-mix(in srgb, var(--purple) 35%, var(--border)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--purple) 12%, transparent); }
+
+    .card h3 { margin-top: 12px; font-size: 1.15rem; }
+    .card p { margin-top: 10px; color: var(--muted); }
+    .card ul { margin-top: 14px; padding-left: 18px; color: var(--muted); }
+    .card li { margin: 8px 0; }
+
+    /* PRICING */
+    .pricing-grid{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 34px;
+      align-items: stretch;
+    }
+    .price-card{
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 34px;
+      position: relative;
+      transition: 0.22s ease;
+      box-shadow: var(--shadow);
+      height: 100%;
+      overflow:hidden;
+    }
+    .price-card:hover { transform: translateY(-8px); border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+    .price-card.featured{
+      border: 2px solid color-mix(in srgb, var(--primary) 75%, transparent);
+      background: linear-gradient(145deg, color-mix(in srgb, var(--primary) 10%, var(--panel)), var(--panel));
+    }
+    .ribbon{
+      position: absolute;
+      top: 16px; right: 16px;
+      background: color-mix(in srgb, var(--primary) 14%, transparent);
+      color: color-mix(in srgb, var(--primary) 35%, var(--text));
+      border: 1px solid color-mix(in srgb, var(--primary) 55%, transparent);
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      border-radius: 999px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .plan-name { font-size: 1.15rem; font-weight: 900; }
+    .price-tag { font-size: 2.6rem; font-weight: 950; margin: 14px 0 4px; letter-spacing: -0.03em; }
+    .price-sub { color: var(--muted); font-size: 0.98rem; }
+    .feature-list { list-style: none; margin: 20px 0 18px; }
+    .feature-list li{
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+    .check { color: var(--primary); font-weight: 900; }
+
+    /* CONTACT */
+    .contact-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 30px;
+    }
+    .panel{
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow:hidden;
+      height: 100%;
+    }
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:
+        radial-gradient(650px 260px at 15% 15%, rgba(16,185,129,0.12), transparent 60%),
+        radial-gradient(650px 260px at 85% 10%, rgba(168,85,247,0.10), transparent 60%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .panel > *{ position:relative; z-index:1; }
+
+    .contact-actions{ display:flex; gap: 10px; flex-wrap:wrap; margin-top: 14px; }
+    #copyEmailStatus { margin-top: 10px; color: var(--muted); font-size: 0.95rem; }
+
+    /* Form polish */
+    .form{
+      display:grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .field label{
+      display:block;
+      font-size: 12px;
+      color: color-mix(in srgb, var(--muted) 90%, transparent);
+      margin-bottom: 6px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      font-weight: 850;
+    }
+    .field input, .field textarea{
+      width:100%;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border-2);
+      background: color-mix(in srgb, var(--bg-0) 35%, transparent);
+      color: var(--text);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+    html[data-theme="light"] .field input,
+    html[data-theme="light"] .field textarea{
+      background: rgba(255,255,255,0.85);
+    }
+    .field input::placeholder, .field textarea::placeholder{
+      color: color-mix(in srgb, var(--muted) 75%, transparent);
+    }
+    .field input:focus, .field textarea:focus{
+      border-color: color-mix(in srgb, var(--primary) 70%, transparent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
+    }
+    .field textarea{
+      resize: vertical;
+      min-height: 130px;
+      max-height: 220px;
+    }
+
+    footer{
+      padding: 56px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .fineprint { opacity: 0.85; margin-top: 18px; font-size: 0.95rem; }
+
+    /* RESPONSIVE */
+    @media (max-width: 980px){
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .contact-grid{ grid-template-columns: 1fr; }
+      .nav-links { display:none; }
+      .hamburger { display:inline-flex; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="Kredit Lab Home">
+          <div class="logo">KL</div>
+          <div class="brand-text">
+            <b>Kredit Lab</b>
+            <span>Clarity Before Capital</span>
+          </div>
+        </a>
+
+        <div class="nav-links" aria-label="Primary navigation">
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#packages">Packages</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <div class="nav-cta">
+          <!-- Theme toggle -->
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
+            Light Mode
+          </button>
+
+          <a class="btn btn-outline"
+             href="https://wa.me/60164414739?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20Kredit%20Lab."
+             target="_blank" rel="noopener">WhatsApp</a>
+
+          <a class="btn btn-primary" href="#contact">Get In Touch</a>
+
+          <button class="hamburger" id="hamburger" aria-label="Open menu">Menu</button>
+        </div>
+      </div>
+
+      <div class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#packages">Packages</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header id="top" class="hero">
+    <div class="container">
+      <div class="pill">🇲🇾 A Malaysian Fintech Consultancy</div>
+      <h1>Clarity Before <span class="highlight">Capital</span></h1>
+      <p>
+        Kredit Lab is a Malaysian fintech consultancy founded by former banking professionals.
+        We are not loan brokers. We are financial clarity partners.
+      </p>
+      <div class="hero-actions">
+        <a href="#packages" class="btn btn-primary">View Packages</a>
+        <a href="https://wa.me/60164414739?text=Hi%2C%20I%27d%20like%20to%20check%20my%20eligibility."
+           class="btn btn-outline" target="_blank" rel="noopener">WhatsApp Now</a>
+      </div>
+
+      <div class="badge-row">
+        <div class="badge">Bank-ready analysis</div>
+        <div class="badge">Honest guidance</div>
+        <div class="badge">Beyond banks — alternatives included</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about" class="philosophy">
+    <div class="container">
+      <h2 class="section-title">Our Philosophy</h2>
+
+      <div class="quote-box">
+        “Every business owner deserves clarity, not confusion. Hope, not helplessness.
+        Financial guidance should free people from uncertainty — not trap them in debt they don't need.”
+      </div>
+
+      <p class="center-copy">
+        True financial empowerment begins with understanding — not selling.
+        Rooted in ethical business conduct, we are guided by the belief that wealth should be protected (hifz al-mal)
+        and hardship should be removed (raf' al-haraj).
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon purple">◆</div>
+          <h3>Who We Are</h3>
+          <p>Founded by former banking professionals who understand what financial institutions look for—and what SMEs actually need.</p>
+        </div>
+
+        <div class="card">
+          <div class="icon blue">▦</div>
+          <h3>How We Think</h3>
+          <p>We do not start with “Which loan?” We start with “What does the business need to thrive?”</p>
+        </div>
+
+        <div class="card">
+          <div class="icon green">✓</div>
+          <h3>What You Get</h3>
+          <p>Clear recommendations—apply, restructure, wait, or use alternatives—based on your real situation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title">Our Services</h2>
+      <p class="section-subtitle">
+        Clarity-first guidance for SME owners: assess, decide, then act.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="icon green">📊</div>
+          <h3>1) Financial Health Check</h3>
+          <p>Assess cash flow, debt capacity, credit profile, and operational efficiency.</p>
+          <ul>
+            <li>Understand your true position</li>
+            <li>Identify risks early</li>
+            <li>Get a practical next-step plan</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="icon blue">🏦</div>
+          <h3>2) Credit Assessment & Bank Matching</h3>
+          <p>We assess CCRIS/CTOS and match you to realistic banking options—before you apply.</p>
+          <ul>
+            <li>Eligibility view across multiple banks</li>
+            <li>Reduce rejections and wasted time</li>
+            <li>Improve approval odds with better targeting</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="icon purple">🧾</div>
+          <h3>3) Loan Application Support</h3>
+          <p>When funding is right, we package and position your application in a bank-ready way.</p>
+          <ul>
+            <li>Docs preparation</li>
+            <li>Facility structuring</li>
+            <li>Presentation and support</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="icon green">🧩</div>
+          <h3>4) Beyond Banking Solutions</h3>
+          <p>Alternatives beyond loans—based on your constraint and objective.</p>
+          <ul>
+            <li>Grants and incentives</li>
+            <li>Alternative financing</li>
+            <li>Debt restructuring / consolidation</li>
+            <li>Investor / equity matching</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section id="packages">
+    <div class="container">
+      <h2 class="section-title">Financial Health Check Packages</h2>
+      <p class="section-subtitle">
+        Choose the level of clarity you need. Turnaround: within 1 working day upon receipt of complete documents.
+      </p>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="plan-name">Essential</div>
+          <div class="price-tag">RM500</div>
+          <div class="price-sub">Quick eligibility snapshot.</div>
+
+          <ul class="feature-list">
+            <li><span class="check">✓</span> CCRIS/CTOS evaluation</li>
+            <li><span class="check">✓</span> Multi-bank eligibility check</li>
+            <li><span class="check">✓</span> Credit health summary</li>
+            <li><span class="check">✓</span> 15-minute consultation call</li>
+            <li><span class="check">✓</span> Summary recommendations</li>
+          </ul>
+
+          <a class="btn btn-outline" style="width:100%; text-align:center;"
+             href="https://wa.me/60164414739?text=Hi%2C%20I%20want%20the%20Essential%20package%20(RM500)."
+             target="_blank" rel="noopener">Choose Essential</a>
+        </div>
+
+        <div class="price-card featured">
+          <div class="ribbon">Recommended</div>
+          <div class="plan-name">Pro</div>
+          <div class="price-tag">RM1,000</div>
+          <div class="price-sub">Deeper analysis + action plan.</div>
+
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Everything in Essential</li>
+            <li><span class="check">✓</span> Financial statement analysis</li>
+            <li><span class="check">✓</span> Cash flow assessment</li>
+            <li><span class="check">✓</span> Debt capacity analysis</li>
+            <li><span class="check">✓</span> Detailed appendix + action plan</li>
+          </ul>
+
+          <a class="btn btn-primary" style="width:100%; text-align:center;"
+             href="https://wa.me/60164414739?text=Hi%2C%20I%20want%20the%20Pro%20package%20(RM1000)."
+             target="_blank" rel="noopener">Choose Pro</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="philosophy">
+    <div class="container">
+      <h2 class="section-title">Get In Touch</h2>
+      <p class="section-subtitle">Clients can WhatsApp, email, or submit the form below.</p>
+
+      <div class="contact-grid">
+        <div class="panel">
+          <h3 style="font-size:1.3rem;">Contact Options</h3>
+          <p style="color:var(--muted); margin-top:10px;">
+            Fastest response: WhatsApp. Email works if the client has an email app set up.
+            If the Email button doesn’t open, use “Copy Email” or the enquiry form.
+          </p>
+
+          <div class="contact-actions">
+            <a class="btn btn-primary"
+               href="https://wa.me/60164414739?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20Kredit%20Lab."
+               target="_blank" rel="noopener">WhatsApp</a>
+
+            <a class="btn btn-outline"
+               href="mailto:luqmanulfauzi@gmail.com?subject=Kredit%20Lab%20Enquiry"
+               target="_blank" rel="noopener">Email</a>
+
+            <button class="btn btn-outline" type="button" id="copyEmailBtn">Copy Email</button>
+          </div>
+
+          <p id="copyEmailStatus"></p>
+
+          <p style="color:var(--muted); margin-top:14px;">
+            Email: <b style="color:var(--text);">luqmanulfauzi@gmail.com</b><br />
+            WhatsApp: <b style="color:var(--text);">+60 16-441 4739</b>
+          </p>
+        </div>
+
+        <div class="panel">
+          <h3 style="font-size:1.3rem;">Send an Enquiry</h3>
+          <p style="color:var(--muted); margin-top:10px;">
+            This form submits directly on the website and redirects to a Thank You page.
+          </p>
+
+          <!-- NETLIFY FORM -->
+          <form class="form"
+                name="contact"
+                method="POST"
+                action="/success.html"
+                data-netlify="true"
+                netlify-honeypot="bot-field">
+
+            <input type="hidden" name="form-name" value="contact" />
+
+            <p style="display:none;">
+              <label>Don’t fill this out: <input name="bot-field" /></label>
+            </p>
+
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" type="text" name="name" placeholder="Your name" required />
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" name="email" placeholder="you@email.com" required />
+            </div>
+
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" placeholder="Tell us what you need help with..." required></textarea>
+            </div>
+
+            <button class="btn btn-primary" type="submit" style="justify-self:start;">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <h2 style="margin-bottom: 12px; color: var(--primary);">Kredit Lab</h2>
+      <div>(A division of Capital Island Sdn Bhd)</div>
+      <div class="fineprint">
+        Rooted in the principles of ethical business conduct.<br />
+        Protecting Wealth (hifz al-mal) • Removing Hardship (raf' al-haraj)
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ---------------------------
+    // Mobile menu toggle
+    // ---------------------------
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburger?.addEventListener("click", () => {
+      mobileMenu.classList.toggle("show");
+    });
+
+    mobileMenu?.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => mobileMenu.classList.remove("show"));
+    });
+
+    // ---------------------------
+    // Copy Email fallback
+    // ---------------------------
+    const copyBtn = document.getElementById("copyEmailBtn");
+    const statusEl = document.getElementById("copyEmailStatus");
+    const emailToCopy = "luqmanulfauzi@gmail.com";
+
+    copyBtn?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(emailToCopy);
+        statusEl.textContent = "Email copied: " + emailToCopy;
+      } catch (e) {
+        statusEl.textContent = "Copy failed. Please copy manually: " + emailToCopy;
+      }
+    });
+
+    // ---------------------------
+    // Theme toggle (Dark/Light)
+    // ---------------------------
+    const themeToggle = document.getElementById("themeToggle");
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme);
+      if (themeToggle) themeToggle.textContent = (theme === "light") ? "Dark Mode" : "Light Mode";
+    }
+
+    // Load saved theme or system preference
+    (function initTheme(){
+      const saved = localStorage.getItem("theme");
+      if (saved === "light" || saved === "dark") {
+        setTheme(saved);
+        return;
+      }
+      // If no saved preference, use system preference
+      const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      setTheme(prefersLight ? "light" : "dark");
+    })();
+
+    themeToggle?.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      setTheme(current === "dark" ? "light" : "dark");
+    });
+  </script>
+</body>
+</html>
